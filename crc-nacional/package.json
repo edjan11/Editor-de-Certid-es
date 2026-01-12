@@ -1,0 +1,16 @@
+{
+  "name": "crc-nacional-keepalive",
+  "version": "1.0.0",
+  "description": "Mantém sessão CRC Nacional ativa (08h-17h) com painel de atalhos e scripts automáticos",
+  "main": "src/electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "open-crc": "node src/launchChrome.js"
+  },
+  "keywords": ["crc", "registro-civil", "keepalive", "automation"],
+  "author": "Edjan Santos Melo",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^28.0.0"
+  }
+}

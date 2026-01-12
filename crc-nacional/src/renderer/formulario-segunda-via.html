@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário 2ª Via - Nascimento</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 22px;
+      color: #333;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 12px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #14509e;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-title:hover {
+      color: #2172b8;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    input, select, textarea {
+      font-size: 15px !important;
+      padding: 5px 7px !important;
+      height: 34px !important;
+      background: #fcfcfc !important;
+      border: 1.6px solid #b6b6b6 !important;
+      border-radius: 7px !important;
+      box-shadow: none !important;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #2188ce !important;
+      background: #f0f8ff !important;
+      outline: none !important;
+    }
+
+    textarea {
+      min-height: 80px !important;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    select {
+      appearance: none !important;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='10' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.4'/%3E%3C/svg%3E%0A") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 8px center !important;
+      padding-right: 28px !important;
+    }
+
+    .readonly {
+      background: #f8f8f8 !important;
+      color: #888 !important;
+      cursor: not-allowed;
+    }
+
+    .btn-toolbar {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 2px solid #eee;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .oficios {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .oficio-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      background: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .oficio-btn:hover {
+      border-color: #667eea;
+    }
+
+    .oficio-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #1976d2;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Formulário de 2ª Via - Nascimento</h1>
+
+    <div class="info-box">
+      ℹ️ Preencha os dados abaixo. O sistema enviará automaticamente para o TJSE.
+    </div>
+
+    <!-- Seletor de Ofício -->
+    <div class="section">
+      <div class="section-title">🏛️ Selecione o Ofício</div>
+      <div class="oficios">
+        <button class="oficio-btn" data-oficio="6">6º</button>
+        <button class="oficio-btn active" data-oficio="9">9º</button>
+        <button class="oficio-btn" data-oficio="12">12º</button>
+        <button class="oficio-btn" data-oficio="13">13º</button>
+        <button class="oficio-btn" data-oficio="14">14º</button>
+        <button class="oficio-btn" data-oficio="15">15º</button>
+      </div>
+    </div>
+
+    <form id="form-segunda-via">
+      <!-- Dados do Livro/Registro -->
+      <div class="section">
+        <div class="section-title">📚 Dados do Livro/Registro</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Termo *</label>
+            <input type="text" name="termo" required maxlength="8">
+          </div>
+          <div class="form-group">
+            <label>Livro *</label>
+            <input type="text" name="livro" required maxlength="10">
+          </div>
+          <div class="form-group">
+            <label>Folha *</label>
+            <input type="text" name="folha" required maxlength="10">
+          </div>
+          <div class="form-group">
+            <label>Data de Nascimento *</label>
+            <input type="text" name="dataNascimento" placeholder="DD/MM/AAAA" required maxlength="10">
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados do Registrado -->
+      <div class="section">
+        <div class="section-title">👤 Dados do Registrado</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Nome Completo *</label>
+            <input type="text" name="nome" required maxlength="200">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Sexo *</label>
+            <select name="sexo" required>
+              <option value="">Selecione...</option>
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Hora de Nascimento</label>
+            <input type="text" name="horaNascimento" placeholder="HH:MM" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label>Naturalidade</label>
+            <input type="text" name="naturalidade" maxlength="100">
+          </div>
+        </div>
+      </div>
+
+      <!-- Local de Nascimento -->
+      <div class="section">
+        <div class="section-title">📍 Local de Nascimento</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Descrição do Local de Nascimento</label>
+            <input type="text" name="descricaoLocalNascimento" maxlength="200">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cidade de Nascimento</label>
+            <input type="text" name="cidadeNascimento" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label>UF de Nascimento</label>
+            <select name="ufNascimento">
+              <option value="">Selecione...</option>
+              <option value="AC">AC - Acre</option>
+              <option value="AL">AL - Alagoas</option>
+              <option value="AP">AP - Amapá</option>
+              <option value="AM">AM - Amazonas</option>
+              <option value="BA">BA - Bahia</option>
+              <option value="CE">CE - Ceará</option>
+              <option value="DF">DF - Distrito Federal</option>
+              <option value="ES">ES - Espírito Santo</option>
+              <option value="GO">GO - Goiás</option>
+              <option value="MA">MA - Maranhão</option>
+              <option value="MT">MT - Mato Grosso</option>
+              <option value="MS">MS - Mato Grosso do Sul</option>
+              <option value="MG">MG - Minas Gerais</option>
+              <option value="PA">PA - Pará</option>
+              <option value="PB">PB - Paraíba</option>
+              <option value="PR">PR - Paraná</option>
+              <option value="PE">PE - Pernambuco</option>
+              <option value="PI">PI - Piauí</option>
+              <option value="RJ">RJ - Rio de Janeiro</option>
+              <option value="RN">RN - Rio Grande do Norte</option>
+              <option value="RS">RS - Rio Grande do Sul</option>
+              <option value="RO">RO - Rondônia</option>
+              <option value="RR">RR - Roraima</option>
+              <option value="SC">SC - Santa Catarina</option>
+              <option value="SP">SP - São Paulo</option>
+              <option value="SE" selected>SE - Sergipe</option>
+              <option value="TO">TO - Tocantins</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Local de Nascimento</label>
+            <select name="localNascimento">
+              <option value="">Selecione...</option>
+              <option value="1">Hospital</option>
+              <option value="2">Domicílio</option>
+              <option value="3">Outros</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados da Mãe -->
+      <div class="section">
+        <div class="section-title">👩 Dados da Mãe</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Nome da Mãe *</label>
+            <input type="text" name="nomeMae" required maxlength="200">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Nome da Avó Materna</label>
+            <input type="text" name="nomeAvoMaterna" maxlength="200">
+          </div>
+        </div>
+      </div>
+
+      <!-- Dados do Pai -->
+      <div class="section">
+        <div class="section-title">👨 Dados do Pai</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Nome do Pai</label>
+            <input type="text" name="nomePai" maxlength="200">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Nome do Avô Paterno</label>
+            <input type="text" name="nomeAvoPaterno" maxlength="200">
+          </div>
+        </div>
+      </div>
+
+      <!-- Observações -->
+      <div class="section">
+        <div class="section-title">📝 Observações/Averbações</div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Observações da Certidão</label>
+            <textarea name="observacaoCertidao" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botões -->
+      <div class="btn-toolbar">
+        <button type="button" class="btn btn-secondary" onclick="window.close()">
+          ❌ Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          💾 Salvar no TJSE
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const LS_KEY = 'cache_local_nasc_minimal';
+    let oficioSelecionado = '9';
+
+    // ============================================
+    // SISTEMA DE CACHE/AUTOFILL LOCAL NASCIMENTO
+    // ============================================
+
+    function loadCache() {
+      try {
+        const cached = localStorage.getItem(LS_KEY);
+        return cached ? JSON.parse(cached) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCache(cache) {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(cache));
+      } catch (e) {
+        console.error('Erro ao salvar cache:', e);
+      }
+    }
+
+    function normalizarTexto(texto) {
+      return texto.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+    }
+
+    function setupAutofill() {
+      const descricaoInput = document.querySelector('[name="descricaoLocalNascimento"]');
+      const naturalidadeInput = document.querySelector('[name="naturalidade"]');
+      const cidadeInput = document.querySelector('[name="cidadeNascimento"]');
+      const ufSelect = document.querySelector('[name="ufNascimento"]');
+      const localSelect = document.querySelector('[name="localNascimento"]');
+
+      if (!descricaoInput) return;
+
+      let cache = loadCache();
+
+      descricaoInput.addEventListener('input', () => {
+        const descricao = descricaoInput.value;
+        const key = normalizarTexto(descricao);
+
+        if (cache[key]) {
+          const dados = cache[key];
+          if (naturalidadeInput) naturalidadeInput.value = dados.naturalidade || '';
+          if (cidadeInput) cidadeInput.value = dados.cidade || '';
+          if (ufSelect) ufSelect.value = dados.uf || '';
+          if (localSelect) localSelect.value = dados.local || '';
+          console.log('✅ Autofill aplicado:', dados);
+        }
+      });
+
+      // Salva no cache quando todos os campos estiverem preenchidos
+      const salvarNoCache = () => {
+        const descricao = descricaoInput.value.trim();
+        if (!descricao) return;
+
+        const key = normalizarTexto(descricao);
+        cache[key] = {
+          naturalidade: naturalidadeInput?.value || '',
+          cidade: cidadeInput?.value || '',
+          uf: ufSelect?.value || '',
+          local: localSelect?.value || ''
+        };
+
+        saveCache(cache);
+        console.log('💾 Cache atualizado:', cache[key]);
+      };
+
+      [naturalidadeInput, cidadeInput, ufSelect, localSelect].forEach(el => {
+        if (el) el.addEventListener('change', salvarNoCache);
+      });
+    }
+
+    // ============================================
+    // SELETOR DE OFÍCIO
+    // ============================================
+
+    document.querySelectorAll('.oficio-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.oficio-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        oficioSelecionado = btn.dataset.oficio;
+        console.log('Ofício selecionado:', oficioSelecionado);
+      });
+    });
+
+    // ============================================
+    // SUBMIT DO FORMULÁRIO
+    // ============================================
+
+    document.getElementById('form-segunda-via').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const dados = {};
+      formData.forEach((value, key) => {
+        dados[key] = value;
+      });
+
+      dados.oficio = oficioSelecionado;
+
+      console.log('📤 Enviando para TJSE:', dados);
+
+      try {
+        const resultado = await ipcRenderer.invoke('salvar-segunda-via-tjse', dados);
+        console.log('✅ Resultado:', resultado);
+        alert('✅ Certidão salva com sucesso no TJSE!');
+        window.close();
+      } catch (error) {
+        console.error('❌ Erro:', error);
+        alert('❌ Erro ao salvar: ' + error.message);
+      }
+    });
+
+    // ============================================
+    // PREENCHER FORMULÁRIO COM DADOS
+    // ============================================
+
+    ipcRenderer.on('preencher-formulario', (event, dados) => {
+      console.log('📥 Dados recebidos para preencher:', dados);
+      
+      // Preenche os campos
+      Object.keys(dados).forEach(key => {
+        const input = document.querySelector(`[name="${key}"]`);
+        if (input) {
+          input.value = dados[key] || '';
+        }
+      });
+    });
+
+    // ============================================
+    // INICIALIZAÇÃO
+    // ============================================
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setupAutofill();
+      console.log('✅ Sistema de autofill inicializado');
+    });
+  </script>
+</body>
+</html>

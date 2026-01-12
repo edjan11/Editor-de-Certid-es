@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centralizador - Controle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .module {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+        .module:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .module-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .module-icon {
+            font-size: 32px;
+        }
+        .module-text h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .module-text p {
+            font-size: 13px;
+            color: #666;
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s;
+        }
+        .status-dot.active {
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-start {
+            background: #10b981;
+            color: white;
+        }
+        .btn-start:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-stop:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        .btn-start:disabled, .btn-stop:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn-all {
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎛️ Centralizador - Controle</h1>
+        
+        <div class="module">
+            <div class="module-info">
+                <div class="module-icon">🏥</div>
+                <div class="module-text">
+                    <h3>Maternidade TJSE</h3>
+                    <p>Automação de certidões de nascimento</p>
+                </div>
+            </div>
+            <div class="status">
+                <div class="status-dot" id="status-maternidade"></div>
+                <button class="btn-start" id="btn-maternidade" onclick="toggle('maternidade')">Iniciar</button>
+            </div>
+        </div>
+
+        <div class="module">
+            <div class="module-info">
+                <div class="module-icon">📋</div>
+                <div class="module-text">
+                    <h3>CRC Nacional</h3>
+                    <p>Sistema de registro civil</p>
+                </div>
+            </div>
+            <div class="status">
+                <div class="status-dot" id="status-crc"></div>
+                <button class="btn-start" id="btn-crc" onclick="toggle('crc')">Iniciar</button>
+            </div>
+        </div>
+
+        <div class="module">
+            <div class="module-info">
+                <div class="module-icon">🗄️</div>
+                <div class="module-text">
+                    <h3>Backend API</h3>
+                    <p>Servidor PostgreSQL + Express</p>
+                </div>
+            </div>
+            <div class="status">
+                <div class="status-dot" id="status-backend"></div>
+                <button class="btn-start" id="btn-backend" onclick="toggle('backend')">Iniciar</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn-all btn-start" onclick="startAll()">▶️ Iniciar Tudo</button>
+            <button class="btn-all btn-stop" onclick="stopAll()">⏹️ Parar Tudo</button>
+        </div>
+
+        <div class="loading" id="loading">⏳ Processando...</div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        const states = {
+            maternidade: false,
+            crc: false,
+            backend: false
+        };
+
+        // Receber atualizações em tempo real do monitor
+        ipcRenderer.on('status-update', (event, results) => {
+            console.log('📊 Atualização de status:', results);
+            
+            for (const [module, status] of Object.entries(results)) {
+                const isOnline = status === 'online';
+                updateUI(module, isOnline);
+            }
+        });
+
+        // Atualizar status visual
+        function updateUI(module, isRunning) {
+            states[module] = isRunning;
+            const dot = document.getElementById(`status-${module}`);
+            const btn = document.getElementById(`btn-${module}`);
+            
+            if (isRunning) {
+                dot.classList.add('active');
+                btn.textContent = 'Parar';
+                btn.className = 'btn-stop';
+            } else {
+                dot.classList.remove('active');
+                btn.textContent = 'Iniciar';
+                btn.className = 'btn-start';
+            }
+        }
+
+        // Toggle individual
+        async function toggle(module) {
+            const btn = document.getElementById(`btn-${module}`);
+            btn.disabled = true;
+            
+            try {
+                if (states[module]) {
+                    await ipcRenderer.invoke('stop-module', module);
+                    updateUI(module, false);
+                } else {
+                    await ipcRenderer.invoke('start-module', module);
+                    // Aguardar 3s e verificar status real
+                    await new Promise(r => setTimeout(r, 3000));
+                    const isOnline = await ipcRenderer.invoke('check-status', module);
+                    updateUI(module, isOnline);
+                }
+            } catch (error) {
+                alert(`Erro: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Iniciar todos
+        async function startAll() {
+            document.getElementById('loading').classList.add('show');
+            for (const module of ['backend', 'maternidade', 'crc']) {
+                if (!states[module]) {
+                    try {
+                        await ipcRenderer.invoke('start-module', module);
+                        await new Promise(r => setTimeout(r, 2000));
+                        const isOnline = await ipcRenderer.invoke('check-status', module);
+                        updateUI(module, isOnline);
+                    } catch (error) {
+                        console.error(`Erro ao iniciar ${module}:`, error);
+                    }
+                }
+            }
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        // Parar todos
+        async function stopAll() {
+            document.getElementById('loading').classList.add('show');
+            for (const module of ['crc', 'maternidade', 'backend']) {
+                if (states[module]) {
+                    try {
+                        await ipcRenderer.invoke('stop-module', module);
+                        updateUI(module, false);
+                        await new Promise(r => setTimeout(r, 500));
+                    } catch (error) {
+                        console.error(`Erro ao parar ${module}:`, error);
+                    }
+                }
+            }
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        // Verificar status ao carregar
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Interface carregada, verificando status inicial...');
+            
+            // Aguardar 2s para monitor iniciar
+            await new Promise(r => setTimeout(r, 2000));
+            
+            for (const module of ['maternidade', 'crc', 'backend']) {
+                try {
+                    const isRunning = await ipcRenderer.invoke('check-status', module);
+                    updateUI(module, isRunning);
+                } catch (error) {
+                    console.error(`Erro ao verificar ${module}:`, error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

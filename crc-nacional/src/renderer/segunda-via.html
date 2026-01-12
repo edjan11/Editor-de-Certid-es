@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta 2ª Via - TJSE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .tipo-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .tipo-btn {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .tipo-btn:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .tipo-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn-buscar {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 16px;
+    }
+
+    .btn-buscar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-buscar:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .resultados {
+      margin-top: 24px;
+      display: none;
+    }
+
+    .resultados.show {
+      display: block;
+    }
+
+    .resultados h2 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 16px;
+    }
+
+    .resultado-item {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .resultado-item:hover {
+      border-color: #667eea;
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .resultado-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .resultado-termo {
+      font-size: 16px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .resultado-data {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .resultado-nome {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .resultado-pais {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .erro {
+      background: #fee;
+      border: 2px solid #fcc;
+      border-radius: 8px;
+      padding: 16px;
+      color: #c33;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .erro.show {
+      display: block;
+    }
+
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #1976d2;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <span>🔍</span>
+      Consulta 2ª Via - TJSE
+    </h1>
+    <div class="subtitle">Busque registros antigos para emitir certidões</div>
+
+    <div class="info">
+      ℹ️ O sistema usa sua sessão ativa do Chrome no TJSE
+    </div>
+
+    <!-- Seletor de Tipo -->
+    <div class="tipo-selector">
+      <button class="tipo-btn active" data-tipo="nascimento">
+        👶 Nascimento
+      </button>
+      <button class="tipo-btn" data-tipo="casamento">
+        💍 Casamento
+      </button>
+      <button class="tipo-btn" data-tipo="obito">
+        ⚰️ Óbito
+      </button>
+    </div>
+
+    <!-- Formulário de Busca -->
+    <form id="form-busca">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Termo</label>
+          <input type="text" id="termo" placeholder="333" maxlength="8">
+        </div>
+        <div class="form-group">
+          <label>Data de Nascimento</label>
+          <input type="text" id="dataNasc" placeholder="21/10/1970" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Nº Declaração</label>
+          <input type="text" id="declaracao" placeholder="" maxlength="12">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="grid-column: span 2;">
+          <label>Nome</label>
+          <input type="text" id="nome" placeholder="Nome da pessoa" maxlength="70">
+        </div>
+        <div class="form-group">
+          <label>Nome da Mãe</label>
+          <input type="text" id="nomeMae" placeholder="" maxlength="70">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Nome do Pai</label>
+        <input type="text" id="nomePai" placeholder="" maxlength="70">
+      </div>
+
+      <button type="submit" class="btn-buscar">
+        🔍 Buscar (Mock - Teste)
+      </button>
+
+      <button type="button" class="btn-buscar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); margin-top: 8px;" onclick="novoCadastro()">
+        ➕ Novo Cadastro (2ª Via Rápida)
+      </button>
+
+      <button type="button" class="btn-buscar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); margin-top: 8px;" onclick="abrirTJSE()">
+        🌐 Abrir TJSE no Navegador
+      </button>
+    </form>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div>Consultando TJSE...</div>
+    </div>
+
+    <!-- Erro -->
+    <div class="erro" id="erro"></div>
+
+    <!-- Resultados -->
+    <div class="resultados" id="resultados">
+      <h2>📋 Resultados Encontrados</h2>
+      <div id="lista-resultados"></div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let tipoAtual = 'nascimento';
+
+    // Seletor de tipo
+    document.querySelectorAll('.tipo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        tipoAtual = btn.dataset.tipo;
+        limparResultados();
+      });
+    });
+
+    // Formulário
+    document.getElementById('form-busca').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const dados = {
+        tipo: tipoAtual,
+        termo: document.getElementById('termo').value,
+        dataNasc: document.getElementById('dataNasc').value,
+        declaracao: document.getElementById('declaracao').value,
+        nome: document.getElementById('nome').value,
+        nomeMae: document.getElementById('nomeMae').value,
+        nomePai: document.getElementById('nomePai').value
+      };
+
+      console.log('📤 Enviando busca:', dados);
+
+      // Validação
+      if (!dados.termo && !dados.nome) {
+        mostrarErro('Preencha pelo menos o Termo ou o Nome');
+        return;
+      }
+
+      mostrarLoading(true);
+      limparErro();
+
+      try {
+        console.log('🔄 Chamando IPC buscar-segunda-via...');
+        const resultados = await ipcRenderer.invoke('buscar-segunda-via', dados);
+        console.log('📥 Resultados recebidos:', resultados);
+        
+        if (!resultados || resultados.length === 0) {
+          mostrarErro('Nenhum registro encontrado. Tente termo "333" ou "100" para testar o mock.');
+          mostrarLoading(false);
+          return;
+        }
+
+        mostrarResultados(resultados);
+      } catch (error) {
+        console.error('❌ Erro:', error);
+        mostrarErro('Erro ao buscar: ' + error.message);
+      } finally {
+        mostrarLoading(false);
+      }
+    });
+
+    function mostrarResultados(resultados) {
+      const container = document.getElementById('lista-resultados');
+      container.innerHTML = '';
+
+      resultados.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'resultado-item';
+        item.innerHTML = `
+          <div class="resultado-header">
+            <span class="resultado-termo">Termo ${r.termo}</span>
+            <span class="resultado-data">${r.data}</span>
+          </div>
+          <div class="resultado-nome">${r.nome}</div>
+          <div class="resultado-pais">
+            Mãe: ${r.mae || '-'} | Pai: ${r.pai || '-'}
+          </div>
+        `;
+        
+        item.addEventListener('click', () => {
+          ipcRenderer.send('abrir-formulario', r);
+        });
+
+        container.appendChild(item);
+      });
+
+      document.getElementById('resultados').classList.add('show');
+    }
+
+    function mostrarLoading(show) {
+      document.getElementById('loading').classList.toggle('show', show);
+    }
+
+    function mostrarErro(msg) {
+      const erro = document.getElementById('erro');
+      erro.textContent = msg;
+      erro.classList.add('show');
+    }
+
+    function limparErro() {
+      document.getElementById('erro').classList.remove('show');
+    }
+
+    function limparResultados() {
+      document.getElementById('resultados').classList.remove('show');
+      limparErro();
+    }
+
+    function abrirTJSE() {
+      const urls = {
+        nascimento: 'https://www.tjse.jus.br/scc/paginas/segundaVia/nascimento/ConsultaSegundaViaNascimento.jsp',
+        casamento: 'https://www.tjse.jus.br/scc/paginas/segundaVia/casamento/ConsultaSegundaViaCasamento.jsp',
+        obito: 'https://www.tjse.jus.br/scc/paginas/segundaVia/obitoNascidoVivo/ConsultaSegundaViaObitoNascidoVivo.jsp'
+      };
+      
+      ipcRenderer.send('open-url', urls[tipoAtual]);
+    }
+
+    function novoCadastro() {
+      console.log('➕ Abrindo formulário de novo cadastro...');
+      ipcRenderer.send('abrir-formulario', { tipo: tipoAtual, novo: true });
+    }
+  </script>
+</body>
+</html>
