@@ -4,4 +4,14 @@ chrome-data/
 logs/
 *.log
 .env
+credentials.enc
+dist/
 .DS_Store
+
+# Perfis temporários do Chrome
+.chrome-temp-profile/
+.monitor-chrome-profile/
+
+# Arquivos temporários do Windows
+Thumbs.db
+Desktop.ini
