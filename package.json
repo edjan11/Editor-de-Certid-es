@@ -1,0 +1,26 @@
+{
+  "name": "segundas-vias",
+  "version": "0.1.0",
+  "description": "Painel local para emissao de 2 vias (JSON/XML) com atalho na bandeja.",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -w -p tsconfig.json",
+    "ui:build": "tsc -p ui/tsconfig.json",
+    "ui:watch": "tsc -w -p ui/tsconfig.json",
+    "ui:bundle": "esbuild ui/ts/acts/nascimento/nascimento.ts ui/ts/acts/casamento/casamento.ts ui/ts/acts/obito/obito.ts --bundle --format=esm --target=es2019 --outdir=ui/js --entry-names=[name].bundle",
+    "ui:bundle:watch": "esbuild ui/ts/acts/nascimento/nascimento.ts ui/ts/acts/casamento/casamento.ts ui/ts/acts/obito/obito.ts --bundle --format=esm --target=es2019 --outdir=ui/js --entry-names=[name].bundle --watch",
+  "serve": "http-server . -p 4180 -c-1",
+    "dev": "npm-run-all --parallel watch ui:bundle:watch serve"
+  },
+  "dependencies": {
+    "cpf-cnpj-validator": "^1.0.3",
+    "papaparse": "^5.4.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "http-server": "^14.1.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.3.3"
+  }
+}
